@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifeblood</title>
+
+
+    <style>
+        /* Add your existing styles here or merge them if needed */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .login {
+            margin-bottom: 20px;
+        }
+
+        .login input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login button:hover {
+            background-color: #45a049;
+        }
+
+        .logo {
+            width: 350px; 
+            height: auto; 
+        }
+
+        .body-format{
+            background-color: dimgrey;
+        }
+
+    </style>
+</head>
+<class body-format body>
+   
+    <div class="login">
+        <img class="logo" th:src="@{/Images/logo.png}">
+        <h1>Lifeblood Expenses</h1>
+        <form class="login" th:action="@{/login}" method="post">
+            <input type="text" name="username" placeholder="Username" th:required="true" />
+            <input type="password" name="password" placeholder="Password" th:required="true" />
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
