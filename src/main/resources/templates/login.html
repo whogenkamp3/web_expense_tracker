@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +7,9 @@
 
 
     <style>
-        /* Add your existing styles here or merge them if needed */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #1d2d38;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -58,18 +57,13 @@
         }
 
         .logo {
-            width: 350px; 
+            width: auto; 
             height: auto; 
-        }
-
-        .body-format{
-            background-color: dimgrey;
         }
 
     </style>
 </head>
-<class body-format body>
-   
+<body> 
     <div class="login">
         <img class="logo" th:src="@{/Images/logo.png}">
         <h1>Lifeblood Expenses</h1>
