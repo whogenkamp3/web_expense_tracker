@@ -13,35 +13,44 @@ public class LoginCredentials {
 
     }
 
-    public boolean loginStatus(String usernameToCheck, String passwordToCheck){
-        String SQL = "SELECT * FROM Login WHERE user_name = ? AND password = ?";
+    public int[] loginStatus(String usernameToCheck, String passwordToCheck) {
+        String SQL = "SELECT login_id FROM Login WHERE user_name = ? AND password = ?";
         
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
             Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
-
+    
             PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
             preparedStatement.setString(1, usernameToCheck);
             preparedStatement.setString(2, passwordToCheck);
-
+    
             ResultSet result = preparedStatement.executeQuery();
-
+    
             if (result.next()) {
-                return true;
-                // Add your logic for successful login here
+                int loginID = result.getInt("login_id");
+                int[]temp = {1,loginID};
+                return temp;
             }
+    
             preparedStatement.close();
             dbConnection.close();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
-
+        int[] temp = {0, -1};
+        return temp; 
     }
 
+    public static void main(String[]args){
+        LoginCredentials login = new LoginCredentials();
+        int[]yes = login.loginStatus("hi", "hi");
+
+        for(int i =0; i < yes.length; i++){
+            System.out.println(yes[i]);
+        }
+
+    }
 
 
 }

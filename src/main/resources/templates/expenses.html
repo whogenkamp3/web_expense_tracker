@@ -1,10 +1,126 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1d2d38;
+            margin: 0;
+            padding: 0;
+        }
+
+        .banner {
+            text-align: center;
+            background-color: #4CAF50;
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        #pieChartContainer {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+
+            width: 200; 
+            height: auto; 
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello</h1>
 
+<!-- Banner with company name, logo, and dropdown menu -->
+<div class="banner">
+    <div class="dropdown">
+        <button class="dropbtn">Menu</button>
+        <div class="dropdown-content">
+            <a href="#">Option 1</a>
+            <a href="#">Option 2</a>
+            <a href="#">Option 3</a>
+        </div>
+    </div>
+    <h1>Lifeblood Expense Tracker</h1>
+    <!-- <img class="logo" th:src="@{/Images/logo.png}"> -->
+</div>
+
+<!-- Placeholder for the pie chart visualization -->
+<div id="pieChartContainer">
+    <canvas id="pieChart"></canvas>
+</div>
+
+<!-- Include your additional scripts here -->
+<script>
+    // Example data (replace this with your actual Thymeleaf data)
+    var chartData = {
+        labels: ['Category 1', 'Category 2', 'Category 3'],
+        datasets: [{
+            data: [30, 50, 20],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+    };
+
+    // Get the context of the canvas element
+    var ctx = document.getElementById('pieChart').getContext('2d');
+
+    // Create the pie chart
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: chartData
+    });
+</script>
 </body>
 </html>
+

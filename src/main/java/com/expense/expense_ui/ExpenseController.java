@@ -18,6 +18,8 @@ public class ExpenseController {
     @Autowired
     private LoginCredentials loginCredentials;
 
+    private int userID;
+
     @GetMapping("/")
     public String showLoginForm() {
         return "login"; // This will return the login.html Thymeleaf template
@@ -26,14 +28,13 @@ public class ExpenseController {
     @PostMapping("/login")
     public String processLoginForm(@RequestParam String username, @RequestParam String password, Model model) {
         // Call the loginStatus method from the LoginCredentials class
-        boolean loginSuccessful = loginCredentials.loginStatus(username, password);
-        System.out.println(username + password);
-        System.out.println(loginSuccessful);
+        int[]loginSuccessful = loginCredentials.loginStatus(username,password);
 
-        if (loginSuccessful) {
+        if (loginSuccessful[0] == 1 ) {
             // Add the login information to the model to display it in another view
             model.addAttribute("username", username);
             model.addAttribute("password", password);
+            userID = loginSuccessful[1];
             return "expenses";
         } else {
             // Redirect back to the login page with an error message
