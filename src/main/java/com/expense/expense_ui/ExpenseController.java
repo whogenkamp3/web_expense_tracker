@@ -2,6 +2,10 @@ package com.expense.expense_ui;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ExpenseController {
     @Autowired
     private LoginCredentials loginCredentials;
+    private Expense expense;
 
     private int userID;
 
@@ -32,16 +37,32 @@ public class ExpenseController {
 
         if (loginSuccessful[0] == 1 ) {
             // Add the login information to the model to display it in another view
-            model.addAttribute("username", username);
-            model.addAttribute("password", password);
             userID = loginSuccessful[1];
             return "expenses";
         } else {
-            // Redirect back to the login page with an error message
-            model.addAttribute("error", "Invalid credentials");
             return "redirect:/";
         }
     }
+
+    @PostMapping("/login")
+    public String addPieElements(Model model) {
+        // Assuming expense.getAllCategoriesAndValues(userId) returns a Map<String, Double> where the key is the category name and the value is the corresponding value
+        Map<String, Double> categoryData = expense.getAllCategories(userID);
+
+        List<String> categoryLabels = new ArrayList<>();
+        List<Double> categoryValues = new ArrayList<>();
+
+        for (Map.Entry<String, Double> entry : categoryData.entrySet()) {
+            categoryLabels.add(entry.getKey());
+            categoryValues.add(entry.getValue());
+        }
+
+        model.addAttribute("categoryLabels", categoryLabels);
+        model.addAttribute("categoryValues", categoryValues);
+
+        return "expenses";
+    }
+
 
   
 

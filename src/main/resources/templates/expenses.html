@@ -81,7 +81,6 @@
 </head>
 <body>
 
-<!-- Banner with company name, logo, and dropdown menu -->
 <div class="banner">
     <div class="dropdown">
         <button class="dropbtn">Menu</button>
@@ -92,19 +91,20 @@
         </div>
     </div>
     <h1>Lifeblood Expense Tracker</h1>
-    <!-- <img class="logo" th:src="@{/Images/logo.png}"> -->
 </div>
 
-<!-- Placeholder for the pie chart visualization -->
+
 <div id="pieChartContainer">
     <canvas id="pieChart"></canvas>
 </div>
 
-<!-- Include your additional scripts here -->
-<script>
-    // Example data (replace this with your actual Thymeleaf data)
+
+<script th:inline="javascript">
+
+    var categoryLabels = "${categoryLabels}";
+
     var chartData = {
-        labels: ['Category 1', 'Category 2', 'Category 3'],
+        labels: categoryLabels,
         datasets: [{
             data: [30, 50, 20],
             backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
