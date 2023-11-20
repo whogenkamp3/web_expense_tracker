@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
 
-    <!-- Include Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -77,6 +76,20 @@
             width: 200; 
             height: auto; 
         }
+        #yourPieChartContainer {
+            width: 500px; 
+            height: 500px; 
+            margin: auto; 
+        }
+
+        #yourPieChart {
+            width: 100%;
+            height: 100%;
+        }
+  
+        #yourPieChartContainer .chartjs-render-monitor:hover .chartjs-tooltip {
+            font-size: 16px; 
+        }
     </style>
 </head>
 <body>
@@ -94,33 +107,34 @@
 </div>
 
 
-<div id="pieChartContainer">
-    <canvas id="pieChart"></canvas>
+<div id="yourPieChartContainer">
+    <canvas id="yourPieChart"></canvas>
 </div>
 
 
 <script th:inline="javascript">
+    /*<![CDATA[*/
+    var categoryLabels = /*[[${categoryLabels}]]*/ [];
+    var categoryValues = /*[[${categoryValues}]]*/ [];
 
-    var categoryLabels = "${categoryLabels}";
+    console.log(categoryLabels); // Log the data to the console to check if it's correct
+    console.log(categoryValues);
 
-    var chartData = {
-        labels: categoryLabels,
-        datasets: [{
-            data: [30, 50, 20],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-        }]
-    };
-
-    // Get the context of the canvas element
-    var ctx = document.getElementById('pieChart').getContext('2d');
-
-    // Create the pie chart
-    var pieChart = new Chart(ctx, {
+    // Use categoryLabels and categoryValues to create your pie chart
+    // Example: Use Chart.js
+    var ctx = document.getElementById('yourPieChart').getContext('2d');
+    var yourPieChart = new Chart(ctx, {
         type: 'pie',
-        data: chartData
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                data: categoryValues,
+            }]
+        },
     });
+    /*]]>*/
 </script>
+
 </body>
 </html>
 
