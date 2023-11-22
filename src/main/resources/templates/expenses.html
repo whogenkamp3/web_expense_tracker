@@ -98,9 +98,9 @@
     <div class="dropdown">
         <button class="dropbtn">Menu</button>
         <div class="dropdown-content">
-            <a href="#">Option 1</a>
-            <a href="#">Option 2</a>
-            <a href="#">Option 3</a>
+            <a href="/addExpense">Add Expense</a>
+            <a href="/updateExpense">Update Expense</a>
+            <a href="/allExpenses">All Expenses</a>
         </div>
     </div>
     <h1>Lifeblood Expense Tracker</h1>
@@ -113,26 +113,30 @@
 
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    var categoryLabels = /*[[${categoryLabels}]]*/ [];
-    var categoryValues = /*[[${categoryValues}]]*/ [];
+/*<![CDATA[*/
+var categoryLabels = /*[[${categoryLabels}]]*/ [];
+var categoryValues = /*[[${categoryValues}]]*/ [];
 
-    console.log(categoryLabels); // Log the data to the console to check if it's correct
-    console.log(categoryValues);
+var ctx = document.getElementById('yourPieChart').getContext('2d');
 
-    // Use categoryLabels and categoryValues to create your pie chart
-    // Example: Use Chart.js
-    var ctx = document.getElementById('yourPieChart').getContext('2d');
+if (categoryLabels.length === 0 && categoryValues.length === 0) {
+    document.getElementById('yourPieChartContainer').style.display = 'none';
+} else {
+    // If data is available, create the pie chart and show the canvas
     var yourPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: categoryLabels,
-            datasets: [{
-                data: categoryValues,
-            }]
-        },
-    });
-    /*]]>*/
+    type: 'pie',
+    data: {
+        labels: categoryLabels,
+        datasets: [{
+            data: categoryValues,
+        }]
+    },
+});
+}
+function redirectToExpensePage() {
+    window.location.href = '/login';
+}
+/*]]>*/
 </script>
 
 </body>

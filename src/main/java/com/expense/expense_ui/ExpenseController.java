@@ -10,12 +10,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ExpenseController {
+
+    private ArrayList<String> categoryLabels;
+    private ArrayList<Double> categoryValues;
     
     private int userID;
 
     @GetMapping("/")
     public String showLoginForm() {
         return "login"; 
+    }
+
+    @GetMapping("/expenses")
+    public String homePage(Model model){
+        model.addAttribute("categoryLabels", categoryLabels);
+        model.addAttribute("categoryValues", categoryValues);
+        return "expenses";
+    }
+
+    @GetMapping("/addExpense")
+    public String addingExpense(Model model){
+        return "addExpense";
     }
 
     @PostMapping("/login")
@@ -28,11 +43,20 @@ public class ExpenseController {
             ExpenseOverview expense = new ExpenseOverview();
             expense.loadCategories(userID);
 
+
             ArrayList<String> categoryLabels = new ArrayList<>();
             ArrayList<Double> categoryValues = new ArrayList<>();
 
             categoryLabels = expense.getAllCategories();
             categoryValues = expense.getTotalAmount();
+
+            if (expense.getAllCategories() == null || expense.getTotalAmount() == null) {
+                model.addAttribute("categoryLabels", categoryLabels);
+                model.addAttribute("categoryValues", categoryValues);
+                this.categoryLabels = categoryLabels;
+                this.categoryValues = categoryValues;
+                return "expenses";
+            }
 
 
             double total = expense.getTotal();
@@ -46,11 +70,16 @@ public class ExpenseController {
             model.addAttribute("categoryLabels", categoryLabels);
             model.addAttribute("categoryValues", categoryValues);
 
+            this.categoryLabels = categoryLabels;
+            this.categoryValues = categoryValues;
+
             return "expenses";
         } else {
             return "redirect:/";
         }
     }
+
+
 
   
 

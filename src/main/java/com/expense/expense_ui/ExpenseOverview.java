@@ -24,6 +24,10 @@ public class ExpenseOverview {
 
     }
 
+    public int getNumberOfExpense(){
+        return numberOfExpenses;
+    }
+
     public ArrayList<Double> getTotalAmount(){
         return total_amount;
     }
@@ -34,7 +38,7 @@ public class ExpenseOverview {
 
     public void addExpense(String category, double total, String comment, Date date){
         //will eventually pull date from model
-        Expense expense = new Expense(this.numberOfExpenses,category,total,date,comment,this.fk_login_id);
+        Expense expense = new Expense((this.numberOfExpenses +1),category,total,date,comment,this.fk_login_id);
         
      
 
@@ -66,13 +70,18 @@ public class ExpenseOverview {
                 tempDoubleArray.add(tempDouble);
             }
 
+            if(tempDoubleArray.size() > 0 && tempStringArray.size() > 0){
+                this.total = tempDoubleArray.get(tempDoubleArray.size()-1);
 
-            this.total = tempDoubleArray.get(tempDoubleArray.size()-1);
+                this.numberOfExpenses = tempDoubleArray.size() -1;
 
-            this.numberOfExpenses = tempDoubleArray.size() -1;
+                this.category = new ArrayList<>(tempStringArray.subList(0, tempStringArray.size() - 1));
+                this.total_amount = new ArrayList<>(tempDoubleArray.subList(0,tempDoubleArray.size() -1));
 
-            this.category = new ArrayList<>(tempStringArray.subList(0, tempStringArray.size() - 1));
-            this.total_amount = new ArrayList<>(tempDoubleArray.subList(0,tempDoubleArray.size() -1));
+            }
+
+
+
 
             preparedStatement.close();
             dbConnection.close();
@@ -87,6 +96,7 @@ public class ExpenseOverview {
     public static void main(String[]args){
         ExpenseOverview expense = new ExpenseOverview();
         expense.loadCategories(1);
+        System.out.println(expense.getNumberOfExpense());
 
 
     }

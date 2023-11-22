@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +23,7 @@ public class Expense {
 
     }
 
-    public Expense(int expense_id, String category, double cost, Date date, String comment, int fk_login_id){
+    public Expense(int expense_id, String category, double cost, java.util.Date date2, String comment, int fk_login_id){
         this.expense_id = expense_id;
         this.category = category;
         this.cost = cost;
@@ -54,7 +54,6 @@ public class Expense {
 
             while(result.next()){
                 return true;
-
             }
 
 
@@ -67,6 +66,12 @@ public class Expense {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public static void main(String[]args){
+        String day = "2022-05-12";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Expense expense = new Expense(4,"furniture",300,dateFormat.parse(day),"purchasing more furniture for office",1);
     }
 
 
