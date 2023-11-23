@@ -150,15 +150,15 @@
     <!-- Form for adding expense -->
     <div class="form-container">
         <h2>Add Expense</h2>
-        <form id="expenseForm">
+        <form form class="login" th:action="@{/addSucessful}" method="post">
             <label for="category">Category:</label>
-            <input type="text" id="category" name="category" required>
+            <input type="text" id="category" name="category" th:required="true">
 
             <label for="cost">Cost:</label>
-            <input type="number" id="cost" name="cost" required>
+            <input type="number" id="cost" name="cost" th:required="true">
 
             <label for="date">Date:</label>
-            <input type="text" id="date" name="date" placeholder="Select date" required>
+            <input type="text" id="date" name="date" placeholder="Select date" th:required="true">
 
             <label for="comment">Comment:</label>
             <textarea id="comment" name="comment"></textarea>
@@ -172,17 +172,9 @@
         // Initialize date picker
         document.addEventListener('DOMContentLoaded', function () {
             flatpickr("#date", {
-                dateFormat: "Y-m-d",
+                dateFormat: "y-m-d",
                 enableTime: false,
             });
-        });
-
-        // Handle form submission
-        document.getElementById('expenseForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            
-            // Add your logic to handle the form data (e.g., sending to the server)
-            console.log('Form submitted!');
         });
         /*]]>*/
     </script>

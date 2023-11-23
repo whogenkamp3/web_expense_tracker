@@ -9,8 +9,14 @@ import java.util.logging.Logger;
 @Component
 public class LoginCredentials {
 
+    private int login_id;
+
     public LoginCredentials(){
 
+    }
+
+    public int login_id(){
+        return login_id;
     }
 
     public int[] loginStatus(String usernameToCheck, String passwordToCheck) {
@@ -30,6 +36,7 @@ public class LoginCredentials {
             if (result.next()) {
                 int loginID = result.getInt("login_id");
                 int[]temp = {1,loginID};
+                this.login_id = loginID;
                 return temp;
             }
     
@@ -40,16 +47,6 @@ public class LoginCredentials {
         }
         int[] temp = {0, -1};
         return temp; 
-    }
-
-    public static void main(String[]args){
-        LoginCredentials login = new LoginCredentials();
-        int[]yes = login.loginStatus("hi", "hi");
-
-        for(int i =0; i < yes.length; i++){
-            System.out.println(yes[i]);
-        }
-
     }
 
 

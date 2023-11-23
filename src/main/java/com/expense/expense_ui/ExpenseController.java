@@ -4,15 +4,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
 @Controller
 public class ExpenseController {
 
-    private ArrayList<String> categoryLabels;
-    private ArrayList<Double> categoryValues;
+    private ArrayList<String> categoryLabels = new ArrayList<>();
+    private ArrayList<Double> categoryValues = new ArrayList<>();
+    private double total;
     
     private int userID;
 
@@ -31,6 +34,31 @@ public class ExpenseController {
     @GetMapping("/addExpense")
     public String addingExpense(Model model){
         return "addExpense";
+    }
+
+    @PostMapping("/addSucessful")
+    public String processAddForm(@RequestParam String category, @RequestParam double cost, @RequestParam String date, @RequestBody String comment){
+        ExpenseOverview expense = new ExpenseOverview();
+        expense.addExpense(category, cost, comment, date);
+
+        boolean newCategory = true;
+        if(categoryLabels != null){
+            for(int i=0; i< this.categoryLabels.size();i++){
+                if(this.categoryLabels.get(i).equals(category)){
+                    newCategory = false;
+                }
+            }
+        }
+        this.total = this.total + cost;
+
+        if(newCategory){
+            this.categoryLabels.add(category);
+            this.categoryValues.add(cost / this.total);
+        }
+        
+
+
+        return "expenses";
     }
 
     @PostMapping("/login")
@@ -60,6 +88,7 @@ public class ExpenseController {
 
 
             double total = expense.getTotal();
+            this.total = total;
 
             for(int i=0;i<categoryValues.size();i++){
                 double temp = (categoryValues.get(i) / total) * 100;

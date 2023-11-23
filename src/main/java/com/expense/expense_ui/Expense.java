@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,7 +13,7 @@ public class Expense {
     private int expense_id;
     private String category;
     private double cost;
-    private Date date;
+    private String date;
     private String comment;
     private int fk_login_id;
 
@@ -23,7 +21,7 @@ public class Expense {
 
     }
 
-    public Expense(int expense_id, String category, double cost, java.util.Date date2, String comment, int fk_login_id){
+    public Expense(int expense_id, String category, double cost, String date, String comment, int fk_login_id){
         this.expense_id = expense_id;
         this.category = category;
         this.cost = cost;
@@ -32,7 +30,7 @@ public class Expense {
         this.fk_login_id = fk_login_id;
     }
 
-    public boolean addToBackEnd(){
+    public void addToBackEnd(Expense expense){
         String SQL = "INSERT INTO Expense VALUES (?,?,?,?,?,?);";
 
     
@@ -42,18 +40,31 @@ public class Expense {
             Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
 
             PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
-            preparedStatement.setInt(1, this.expense_id);
-            preparedStatement.setString(2, this.category);
-            preparedStatement.setDouble(3, this.cost);
-            preparedStatement.setDate(4, this.date);
-            preparedStatement.setString(5, this.comment);
-            preparedStatement.setInt(6, this.fk_login_id);
+            preparedStatement.setInt(1, expense_id);
+            preparedStatement.setString(2, category);
+            preparedStatement.setDouble(3, cost);
 
-            ResultSet result = preparedStatement.executeQuery();
+            for(int i =0; i<date.length();i++){
+                System.out.println(date.substring(i, i +1));
+            }
 
 
-            while(result.next()){
-                return true;
+
+            Date sqlDate=Date.valueOf(date);
+
+
+
+
+            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setString(5, comment);
+            preparedStatement.setInt(6, fk_login_id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result > 0) {
+                System.out.println("Record inserted successfully!");
+            } else {
+                System.out.println("Failed to insert record.");
             }
 
 
@@ -65,13 +76,15 @@ public class Expense {
         } catch (SQLException ex) {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+
     }
 
     public static void main(String[]args){
-        String day = "2022-05-12";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Expense expense = new Expense(4,"furniture",300,dateFormat.parse(day),"purchasing more furniture for office",1);
+        String today = "2011-11-12";
+        Date sqlDate = Date.valueOf(today);
+        Expense expense = new Expense(6,"furniture",300,today,"purchasing more furniture for office",2);
+        
+        expense.addToBackEnd(expense);
     }
 
 
