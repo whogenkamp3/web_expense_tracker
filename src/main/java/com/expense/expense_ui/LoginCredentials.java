@@ -9,15 +9,11 @@ import java.util.logging.Logger;
 @Component
 public class LoginCredentials {
 
-    private int login_id;
 
     public LoginCredentials(){
 
     }
 
-    public int login_id(){
-        return login_id;
-    }
 
     public int[] loginStatus(String usernameToCheck, String passwordToCheck) {
         String SQL = "SELECT login_id FROM Login WHERE user_name = ? AND password = ?";
@@ -36,9 +32,9 @@ public class LoginCredentials {
             if (result.next()) {
                 int loginID = result.getInt("login_id");
                 int[]temp = {1,loginID};
-                this.login_id = loginID;
                 return temp;
             }
+
     
             preparedStatement.close();
             dbConnection.close();

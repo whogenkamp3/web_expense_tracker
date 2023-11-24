@@ -31,11 +31,11 @@ public class ExpenseOverview {
         return category;
     }
 
-    public void addExpense(String category, double total, String comment, String date){
+    public void addExpense(int userID, String category, double total, String comment, String date){
         date = "20" + date;
 
-        LoginCredentials login = new LoginCredentials();
-        int fk_login_id = login.login_id();
+        //LoginCredentials login = new LoginCredentials();
+        //int fk_login_id = login_id;
 
 
         String SQL = "INSERT INTO Expense VALUES (?,?,?,?,?,?);";
@@ -51,7 +51,7 @@ public class ExpenseOverview {
             Date sqlDate=Date.valueOf(date);
             preparedStatement.setDate(4, sqlDate);
             preparedStatement.setString(5, comment);
-            preparedStatement.setInt(6, fk_login_id);
+            preparedStatement.setInt(6, userID);
 
             int result = preparedStatement.executeUpdate();
 
@@ -83,9 +83,6 @@ public class ExpenseOverview {
 
             ResultSet result = preparedStatement.executeQuery();
 
-       
-
-
 
             while(result.next()){
                 return result.getInt("expense_id");
@@ -93,6 +90,8 @@ public class ExpenseOverview {
 
             preparedStatement.close();
             dbConnection.close();
+
+ 
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
