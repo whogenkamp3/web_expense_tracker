@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 @Component
 public class ExpenseOverview {
     private double total;
-    private int fk_login_id;
+    //private int fk_login_id;
     private ArrayList<String> category;
     private ArrayList<Double> total_amount;
 
@@ -104,7 +104,6 @@ public class ExpenseOverview {
 
     public void loadCategories(int userID){
         String SQL = "SELECT  category, SUM(amount) as totalAmount FROM Expense WHERE fk_login_id = ? GROUP BY category WITH ROLLUP;";
-        this.fk_login_id = userID;
         
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
