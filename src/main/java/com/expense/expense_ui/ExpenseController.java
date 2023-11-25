@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,17 +28,21 @@ public class ExpenseController {
     }
 
     @GetMapping("/expenses")
-    public String homePage(Model model){
+    public String homePage(@CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories,Model model){
+        List<String> categoryValues = getUnserializedData(serializedValues);
+        List<String> categoryLabels = getUnserializedData(serializedCategories);
+        model.addAttribute("categoryLabels", categoryLabels);
+        model.addAttribute("categoryValues", categoryValues);
         return "expenses";
     }
 
     @GetMapping("/addExpense")
-    public String addingExpense(Model model, LoginCredentials expense){
+    public String addingExpense(Model model){
         return "addExpense";
     }
 
     @PostMapping("/addSucessful")
-    public String processAddForm(@CookieValue(name="total",defaultValue = "")String tempTotal,@CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, @CookieValue(name = "userID", defaultValue = "") String tempUserID, @RequestParam String category, @RequestParam double cost, @RequestParam String date, @RequestParam String comment,Model model){
+    public String processAddForm(HttpServletResponse response,@CookieValue(name="total",defaultValue = "")String tempTotal,@CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, @CookieValue(name = "userID", defaultValue = "") String tempUserID, @RequestParam String category, @RequestParam double cost, @RequestParam String date, @RequestParam String comment,Model model){
         ExpenseOverview expense = new ExpenseOverview();
         int userID = Integer.parseInt(tempUserID);
         double total = Double.parseDouble(tempTotal);
@@ -46,8 +51,8 @@ public class ExpenseController {
         boolean emptyArrays = true;
 
         if(!serializedCategories.isEmpty() && ! serializedValues.isEmpty()){
-            categoryLabels = Arrays.asList(serializedCategories.split(","));
-            tempcategoryValues = Arrays.asList(serializedValues.split(","));
+            categoryLabels = getUnserializedData(serializedCategories);
+            tempcategoryValues = getUnserializedData(serializedValues);
             emptyArrays = false;
         }
 
@@ -76,20 +81,63 @@ public class ExpenseController {
             List<Double> tempTwocategoryValues = new ArrayList<>();
             tempTwocategoryValues.add(cost / total);
             model.addAttribute("categoryValues", tempTwocategoryValues);
+            updateCookies(response, total, tempcategoryLabels, tempTwocategoryValues);
         }
         else if(newCategory && !emptyArrays && categoryLabels != null && categoryValues != null){
-            categoryLabels.add(category);
+            List<String> tempStringdata = serializeData(categoryLabels,category);
+            double tempCost = cost / total;
+            List<Double> tempDoubledata = serializeData(categoryValues,tempCost);
             categoryValues.add(cost/total);
-            model.addAttribute("categoryLabels", categoryLabels);
-            model.addAttribute("categoryValues", categoryValues);
-
+            model.addAttribute("categoryLabels", tempStringdata);
+            model.addAttribute("categoryValues", tempDoubledata);
+            updateCookies(response, total, tempDoubledata, tempStringdata);
         }
         else{
             model.addAttribute("categoryLabels", categoryLabels);
             model.addAttribute("categoryValues", categoryValues);
+            updateTotalCookie(response,total);
         }
 
         return "expenses";
+    }
+
+    private List<Double> serializeData(List<Double> categoryValues, double tempCost) {
+        List<Double>newArray = new ArrayList<>();
+        newArray = categoryValues;
+        newArray.add(tempCost);
+        return newArray;
+    }
+
+    private void updateCookies(HttpServletResponse response, double total, List<String> categoryLabels, List<Double> categoryValues) {
+        Cookie totalCookie = new Cookie("total", String.valueOf(total));
+        response.addCookie(totalCookie);
+
+        Cookie categoryLabelsCookie = new Cookie("categoryLabels", String.join(",", categoryLabels));
+        response.addCookie(categoryLabelsCookie);
+
+        List<String> serializedValues = categoryValues.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+
+        Cookie categoryValuesCookie = new Cookie("categoryValues", String.join(",", serializedValues));
+        response.addCookie(categoryValuesCookie);
+    }
+    private void updateTotalCookie(HttpServletResponse response, double total) {
+        Cookie totalCookie = new Cookie("total", String.valueOf(total));
+        response.addCookie(totalCookie);
+    }
+
+    private List<String> getUnserializedData(String temp){
+        List<String> tempArray = Arrays.asList(temp.split(","));
+        return tempArray;
+    }
+
+    private List<String> serializeData(List<String>tempArray, String temp){
+        List<String>newArray = new ArrayList<>();
+        newArray = tempArray;
+        newArray.add(temp);
+        return newArray;
+
     }
 
     @PostMapping("/login")
