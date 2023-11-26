@@ -26,6 +26,90 @@ public class ExpenseController {
         return "login"; 
     }
 
+    @GetMapping("/updateExpense")
+    public void updateExpense(@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
+        ExpenseOverview expense = new ExpenseOverview();
+        int userID = Integer.parseInt(tempUserID);
+        ExpenseOverview expenseData = expense.dataForUpdateExpense(userID);
+        List<Double> expenseAmounts = expenseData.getExpenseAmounts();
+        List<String> expenseDate = expenseData.getExpenseDates();
+        List<String> expenseCategories = expenseData.getExpenseCategories();
+
+        List<String>allElements = new ArrayList<>();
+        for(int i=0;i<expenseAmounts.size();i++){
+            String temp = expenseDate.get(i).toUpperCase() + "    " + expenseAmounts.get(i) + "    " + expenseCategories.get(i).toUpperCase();
+            allElements.add(temp);
+        }
+    
+        model.addAttribute("allElements", allElements);
+
+    }
+
+    @PostMapping("/finalizeUpdate")
+    public String finalizeUpdate(@RequestParam(name = "cost", required = true) String selectedValueAndIndex, 
+                                @RequestParam(name = "expenseCategory", required = false) String expenseCategory, 
+                                @RequestParam(name = "costExpense", required = false) String tempCost,
+                                @RequestParam(name = "dateExpense", required = false) String date, 
+                                @CookieValue(name="total",defaultValue = "")String tempTotal,
+                                @CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, 
+                                @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, 
+                                @CookieValue(name = "categoryTotals", defaultValue = "") String serializedTotals, Model model){
+        ExpenseOverview expense = new ExpenseOverview();
+        double cost = Double.parseDouble(tempCost);
+        //expense.updateExpense(expenseCategory,cost, date);
+
+        double total = Double.parseDouble(tempTotal);
+
+        List<String> categoryLabels = new ArrayList<>();
+        List<String> tempcategoryValues = new ArrayList<>();
+        List<String> tempcategoryTotals = new ArrayList<>();
+
+        categoryLabels = getUnserializedData(serializedCategories);
+        tempcategoryValues = getUnserializedData(serializedValues);
+        tempcategoryTotals = getUnserializedData(serializedTotals);
+
+        List<Double> categoryValues = new ArrayList<>();
+        List<Double> categoryTotals = new ArrayList<>();
+        for(int i=0;i<tempcategoryValues.size();i++){
+            double temp = Double.parseDouble(tempcategoryValues.get(i));
+            double tempOne = Double.parseDouble(tempcategoryTotals.get(i));
+            categoryValues.add(temp);
+            categoryTotals.add(tempOne);
+        }
+
+        String[] values = selectedValueAndIndex.split("\\s{4}");
+        String originalCategory = values[2];
+        String originalDate = values[0];
+        double originalCost = Double.parseDouble(values[1]);
+        originalCost = originalCost / total;
+        originalCost =  Math.round(originalCost*100.0)/100.0;
+
+        if(cost != 0.0){
+            if(cost > originalCost){
+                //total = 
+            }
+
+        }
+
+        if(expenseCategory.length() > 0){
+            for(int i=0;i<categoryLabels.size();i++){
+                if(originalCategory.equals(categoryLabels.get(i)) && originalCost == categoryValues.get(i)){
+                    categoryLabels.set(i, expenseCategory);
+                }
+            }
+        }
+        //need to update expenseCategory
+    
+
+
+        return "expenses";
+
+    }
+
+
+
+
+
     @GetMapping("/expenses")
     public String homePage(@CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories,Model model){
         List<String> categoryValues = getUnserializedData(serializedValues);
@@ -101,15 +185,27 @@ public class ExpenseController {
             updateCookies(response, total, tempStringdata, tempDoubledata,tempTotaldata);
         }
         else{
-            model.addAttribute("categoryLabels", categoryLabels);
+            List<Double> tempTotaldata = new ArrayList<>();
+            List<Double> tempValuesdata = new ArrayList<>();
             for(int i=0;i<categoryValues.size();i++){
                 if(i==index){
-                    categoryValues.set(i,categoryValues.get(i)+cost);
+                    double temp = categoryTotals.get(i)+cost;
+                    tempTotaldata.add(temp);
+                    double tempRound = (temp  / total) *100;
+                    double format =  Math.round(tempRound*100.0)/100.0;
+                    tempValuesdata.add(format);
                 }
-                //categoryValues.set(i,);
+                else{
+                    double temp = (categoryTotals.get(i) / total) * 100;
+                    double format = Math.round(temp*100.0)/100.0;
+                    tempTotaldata.add(categoryTotals.get(i));
+                    tempValuesdata.add(format);
+                }
             }
-            model.addAttribute("categoryValues", categoryValues);
-            updateTotalCookie(response,total);
+            model.addAttribute("categoryValues", tempValuesdata);
+            model.addAttribute("categoryLabels", categoryLabels);
+            model.addAttribute("categoryTotals",tempTotaldata);
+            updateCookies(response,total,categoryLabels,tempValuesdata,tempTotaldata);
         }
 
         return "expenses";
@@ -137,11 +233,6 @@ public class ExpenseController {
         Cookie CategoryTotalsCookie = new Cookie("categoryTotals",URLEncoder.encode(tempArrayJoinTwo, StandardCharsets.UTF_8));
         response.addCookie(categoryValuesCookie);
         response.addCookie(CategoryTotalsCookie);
-    }
-
-    private void updateTotalCookie(HttpServletResponse response, double total) {
-        Cookie totalCookie = new Cookie("total", String.valueOf(total));
-        response.addCookie(totalCookie);
     }
 
     private List<String> getUnserializedData(String temp){

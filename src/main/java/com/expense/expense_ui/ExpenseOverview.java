@@ -4,18 +4,39 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
 public class ExpenseOverview {
     private double total;
-    //private int fk_login_id;
     private ArrayList<String> category;
     private ArrayList<Double> total_amount;
+    private List<String> expenseDates;
+    private List<String> expenseCategories;
+    private List<Double> expenseAmounts; 
 
     public ExpenseOverview(){
 
+    }
+
+    public ExpenseOverview(List<String> expenseDates,List<String> expenseCategories,List<Double> expenseAmounts){
+        this.expenseDates = expenseDates;
+        this.expenseCategories = expenseCategories;
+        this.expenseAmounts = expenseAmounts;
+    }
+
+    public List<String> getExpenseDates(){
+        return expenseDates;
+    }
+
+    public List<String> getExpenseCategories(){
+        return expenseCategories;
+    }
+
+    public List<Double> getExpenseAmounts(){
+        return expenseAmounts;
     }
 
     public double getTotal(){
@@ -31,12 +52,68 @@ public class ExpenseOverview {
         return category;
     }
 
+    public ExpenseOverview dataForUpdateExpense(int UserID){
+        String SQL = "SELECT category, amount,purchase_date FROM Expense WHERE fk_login_id = ?";
+        List<String> expenseDates = new ArrayList<>();
+        List<Double> expenseAmounts = new ArrayList<>();
+        List<String> expenseCategories = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
+            Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
+            preparedStatement.setInt(1,UserID);
+
+            ResultSet result = preparedStatement.executeQuery();
+
+
+            while(result.next()){ 
+                Date tempDate = result.getDate("purchase_date");
+                String tempStringDate = tempDate.toString();
+                double tempDouble = result.getDouble("amount");
+                String tempString = result.getString("category");
+                expenseDates.add(tempStringDate);
+                expenseAmounts.add(tempDouble);
+                expenseCategories.add(tempString);
+            }
+
+            preparedStatement.close();
+            dbConnection.close();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        ExpenseOverview returnData = new ExpenseOverview(expenseDates,expenseCategories,expenseAmounts);
+        return returnData;
+
+
+    }
+
+    public void updateExpense(String category, double cost, String date){
+        String SQL = "UPDATE Expense SET";
+        if(category.length() > 0){
+            SQL = SQL + " category = " + category + ",";
+        }
+        if(cost != 0.0){
+            SQL = SQL + " cost = " + cost + ",";
+        }
+        if(date.length() > 0){
+            SQL = SQL + " date = " + date + ",";
+        }
+
+        int length = SQL.length();
+
+        if(SQL.substring(length, length+1).equals(",")){
+
+        }
+
+    }
+
     public void addExpense(int userID, String category, double total, String comment, String date){
         date = "20" + date;
-
-        //LoginCredentials login = new LoginCredentials();
-        //int fk_login_id = login_id;
-
 
         String SQL = "INSERT INTO Expense VALUES (?,?,?,?,?,?);";
         try {
@@ -78,9 +155,7 @@ public class ExpenseOverview {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
             Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
-
             PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
-
             ResultSet result = preparedStatement.executeQuery();
 
 
@@ -90,8 +165,6 @@ public class ExpenseOverview {
 
             preparedStatement.close();
             dbConnection.close();
-
- 
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,17 +201,9 @@ public class ExpenseOverview {
 
             if(tempDoubleArray.size() > 0 && tempStringArray.size() > 0){
                 this.total = tempDoubleArray.get(tempDoubleArray.size()-1);
-
-            
-
                 this.category = new ArrayList<>(tempStringArray.subList(0, tempStringArray.size() - 1));
                 this.total_amount = new ArrayList<>(tempDoubleArray.subList(0,tempDoubleArray.size() -1));
-
             }
-
-
-
-
             preparedStatement.close();
             dbConnection.close();
 
