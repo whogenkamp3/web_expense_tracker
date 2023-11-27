@@ -61,3 +61,10 @@ The following dependencies are required:
 * spring-boot-devtools
 * spring-boot-starter-test
 
+## Expected Results
+
+<img src="./src/main/resources/static/Images/readmeImageOne.jpeg" alt="Local Image" width="400" height="300">
+
+
+
+
