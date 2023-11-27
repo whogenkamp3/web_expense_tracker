@@ -64,15 +64,19 @@ The following dependencies are required:
 ## Expected Results
 
 Log In:
+
 <img src="./src/main/resources/static/Images/readmeImageOne.jpeg" alt="Local Image" width="400" height="300">
 
 Pie Chart:
+
 <img src="./src/main/resources/static/Images/readmeImageTwo.jpeg" alt="Local Image" width="400" height="300">
 
 Adding Expenses:
+
 <img src="./src/main/resources/static/Images/readmeImageThree.jpeg" alt="Local Image" width="400" height="300">
 
 Data Table:
+
 <img src="./src/main/resources/static/Images/readmeImageFour.jpeg" alt="Local Image" width="400" height="300">
 
 
