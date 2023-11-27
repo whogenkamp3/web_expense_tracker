@@ -52,7 +52,7 @@ Code:
   )ENGINE = INNODB;
 ```
 
-##Depencies
+## Depencies
 For the Expense Tracker to run properly specific dependencies from the pom.xml file are required.
 
 The following dependencies are required:
