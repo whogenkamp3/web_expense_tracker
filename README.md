@@ -6,14 +6,14 @@ It was developed on spring boot using basic java and HTML.
 
 The code is a locally run expense tracker that one could use and implement on their own computer if wanted.
 
-# File System
+## File System
 The file system includes a multitude of different sections: 
 * A Controller
 * An Application Runner
 * Multiple java files
 * Multiple HTML files
 
-# Data
+## Data
 In order for the Expense Tracker to function properly it must be connected locally to a database.
 To create the database we have provided the code below.
 Code:
