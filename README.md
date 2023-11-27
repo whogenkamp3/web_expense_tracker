@@ -64,6 +64,9 @@ The following dependencies are required:
 ## Expected Results
 
 <img src="./src/main/resources/static/Images/readmeImageOne.jpeg" alt="Local Image" width="400" height="300">
+<img src="./src/main/resources/static/Images/readmeImageTwo.jpeg" alt="Local Image" width="400" height="300">
+<img src="./src/main/resources/static/Images/readmeImageThree.jpeg" alt="Local Image" width="400" height="300">
+<img src="./src/main/resources/static/Images/readmeImageFour.jpeg" alt="Local Image" width="400" height="300">
 
 
 
