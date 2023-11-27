@@ -1,4 +1,4 @@
-package com.expense.expense_ui;
+package com.expense.expense_ui.PJO;
 
 public class Allexpenses {
     private String category;

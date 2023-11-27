@@ -1,6 +1,8 @@
-package com.expense.expense_ui;
+package com.expense.expense_ui.Backend;
 
 import org.springframework.stereotype.Component;
+
+import com.expense.expense_ui.PJO.Allexpenses;
 
 import java.sql.*;
 import java.util.ArrayList;

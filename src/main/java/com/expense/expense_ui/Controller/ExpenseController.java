@@ -1,4 +1,4 @@
-package com.expense.expense_ui;
+package com.expense.expense_ui.Controller;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.expense.expense_ui.Backend.ExpenseOverview;
+import com.expense.expense_ui.Backend.LoginCredentials;
+import com.expense.expense_ui.PJO.Allexpenses;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
