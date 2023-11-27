@@ -61,5 +61,3 @@ The following dependencies are required:
 * spring-boot-devtools
 * spring-boot-starter-test
 
-  
-
