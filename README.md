@@ -15,8 +15,11 @@ The file system includes a multitude of different sections:
 
 ## Data
 In order for the Expense Tracker to function properly it must be connected locally to a database.
+
 To create the database we have provided the code below.
+
 Code:
+
   CREATE TABLE Login (
      login_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
      user_name VARCHAR(50) NOT NULL,
