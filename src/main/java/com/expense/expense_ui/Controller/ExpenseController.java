@@ -70,11 +70,11 @@ public class ExpenseController {
 
     @PostMapping("/finalizeUpdate")
     public String finalizeUpdate(@RequestParam(name = "cost", required = true) String selectedValueAndIndex, 
-                                @CookieValue(name="expense_id", required = true) String tempExpenseID,
                                 @RequestParam(name = "expenseCategory", required = false) String expenseCategory, 
                                 @RequestParam(name = "costExpense", required = false) String tempCost,
                                 @RequestParam(name = "dateExpense", required = false) String date, 
                                 @CookieValue(name="total",defaultValue = "")String tempTotal,
+                                @CookieValue(name="expense_id", required = true) String tempExpenseID,
                                 @CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, 
                                 @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, 
                                 @CookieValue(name = "categoryTotals", defaultValue = "") String serializedTotals, Model model,
@@ -217,7 +217,17 @@ public class ExpenseController {
     }
 
     @PostMapping("/addSucessful")
-    public String processAddForm(HttpServletResponse response,@CookieValue(name="categoryTotals",defaultValue = "")String serializedTotals,@CookieValue(name="total",defaultValue = "")String tempTotal,@CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, @CookieValue(name = "userID", defaultValue = "") String tempUserID, @RequestParam String category, @RequestParam double cost, @RequestParam String date, @RequestParam String comment,Model model){
+    public String processAddForm(@RequestParam double cost, 
+                                @RequestParam String date, 
+                                @RequestParam String comment,
+                                @RequestParam String category,
+                                @CookieValue(name="categoryTotals",defaultValue = "")String serializedTotals,
+                                @CookieValue(name="total",defaultValue = "")String tempTotal,
+                                @CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, 
+                                @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, 
+                                @CookieValue(name = "userID", defaultValue = "") String tempUserID,  
+                                HttpServletResponse response,
+                                Model model){
         ExpenseOverview expense = new ExpenseOverview();
         int userID = Integer.parseInt(tempUserID);
         double total = Double.parseDouble(tempTotal);
@@ -303,7 +313,10 @@ public class ExpenseController {
         return "expenses";
     }
 
-    private void updateCookies(HttpServletResponse response, double total, List<String> categoryLabels, List<Double> categoryValues, List<Double> categoryTotals) {
+    private void updateCookies(HttpServletResponse response, 
+                               double total, List<String> categoryLabels, 
+                               List<Double> categoryValues, 
+                               List<Double> categoryTotals) {
         Cookie totalCookie = new Cookie("total", String.valueOf(total));
         response.addCookie(totalCookie);
 
@@ -371,7 +384,10 @@ public class ExpenseController {
     }
 
     @PostMapping("/login")
-    public String processLoginForm( @RequestParam String username, @RequestParam String password, Model model, HttpServletResponse response) {
+    public String processLoginForm( @RequestParam String username, 
+                                    @RequestParam String password, 
+                                    Model model, 
+                                    HttpServletResponse response) {
         LoginCredentials loginCredential = new LoginCredentials();
         int[]loginSuccessful = loginCredential.loginStatus(username,password);
 
