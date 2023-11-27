@@ -1,4 +1,4 @@
-# web_expense_tracker
+# Web Expense Tracker
 
 This is a repository for a simple coded Expense Tracker. Made by Liam Hogenkamp, Matt Hicks, and Lucas Johnson from Creighton University.
 
