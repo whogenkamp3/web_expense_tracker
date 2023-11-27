@@ -20,6 +20,7 @@ To create the database we have provided the code below.
 
 Code:
 
+```
   CREATE TABLE Login (
      login_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
      user_name VARCHAR(50) NOT NULL,
@@ -49,7 +50,7 @@ Code:
      FOREIGN KEY (fk_login_id) REFERENCES Login(login_id)
      ON DELETE CASCADE
   )ENGINE = INNODB;
-
+```
 
 
 
