@@ -58,6 +58,45 @@ public class ExpenseOverview {
         return expense_id;
     }
 
+    public List<Allexpenses> allExpensesForDisplay(int userID){
+        String SQL = "SELECT category,amount,purchase_date,descriptions FROM expense WHERE fk_login_id = ?";
+        List<Allexpenses> returnData = new ArrayList<>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
+            Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
+            preparedStatement.setInt(1,userID);
+
+            ResultSet result = preparedStatement.executeQuery();
+
+
+            while(result.next()){ 
+                String tempCat = result.getString("category");
+                Double tempAmount = result.getDouble("amount");
+                Date tempPurchase = result.getDate("purchase_date");
+                String tempDate = tempPurchase + "";
+                String tempDes = result.getString("descriptions");
+                Allexpenses tempExpenses = new Allexpenses(tempCat, tempAmount, tempDate, tempDes);
+                returnData.add(tempExpenses);
+                
+            }
+
+            preparedStatement.close();
+            dbConnection.close();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return returnData;
+
+    }
+
+
     public ExpenseOverview dataForUpdateExpense(int UserID){
         String SQL = "SELECT expense_id, category, amount,purchase_date FROM Expense WHERE fk_login_id = ?";
         List<String> expenseDates = new ArrayList<>();
@@ -107,7 +146,7 @@ public class ExpenseOverview {
             SQL = SQL + " category = " + category + ",";
         }
         if(cost != 0.0){
-            SQL = SQL + " cost = " + cost + ",";
+            SQL = SQL + " amount = " + cost + ",";
         }
         if(date.length() > 0){
             SQL = SQL + " date = " + date + ",";

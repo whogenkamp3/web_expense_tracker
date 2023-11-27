@@ -20,6 +20,35 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .table-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
         .form-container input,
         .form-container select,
@@ -138,6 +167,23 @@
             </div>
         </div>
         <h1>Lifeblood Expense Tracker</h1>
+    </div>
+    <div class="table-container">
+        <h2>All Expenses</h2>
+        <table border="solid" width="100%">
+            <tr>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Purchase Date</th>
+                <th>Description</th>
+            </tr>
+            <tr th:each="expense: ${allData}">
+                <td th:text="${expense.category}"></td>
+                <td th:text="${expense.amount}"></td>
+                <td th:text="${expense.purchase_date}"></td>
+                <td th:text="${expense.descriptions}"></td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

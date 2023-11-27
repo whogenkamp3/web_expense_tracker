@@ -27,12 +27,19 @@ public class ExpenseController {
     }
 
     @GetMapping("/allExpenses")
-    public String displayExpenses(){
+    public String displayExpenses(@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
+        int userID = Integer.parseInt(tempUserID);
+
+        ExpenseOverview expense = new ExpenseOverview();
+        List<Allexpenses> allData = expense.allExpensesForDisplay(userID);
+
+        model.addAttribute("allData", allData);
+
         return "allExpenses";
     }
 
     @GetMapping("/updateExpense")
-    public void updateExpense(HttpServletResponse response,@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
+    public String updateExpense(HttpServletResponse response,@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
         ExpenseOverview expense = new ExpenseOverview();
         int userID = Integer.parseInt(tempUserID); 
         ExpenseOverview expenseData = expense.dataForUpdateExpense(userID);
@@ -54,11 +61,12 @@ public class ExpenseController {
             allElements.add(temp);
         }
         model.addAttribute("allElements", allElements);
+        return "updateExpense";
     }
 
     @PostMapping("/finalizeUpdate")
     public String finalizeUpdate(@RequestParam(name = "cost", required = true) String selectedValueAndIndex, 
-                                @RequestParam(name="expense_id", defaultValue = "") String tempExpenseID,
+                                @CookieValue(name="expense_id", required = true) String tempExpenseID,
                                 @RequestParam(name = "expenseCategory", required = false) String expenseCategory, 
                                 @RequestParam(name = "costExpense", required = false) String tempCost,
                                 @RequestParam(name = "dateExpense", required = false) String date, 
