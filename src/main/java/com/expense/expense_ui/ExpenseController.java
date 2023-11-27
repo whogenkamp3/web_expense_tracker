@@ -120,12 +120,12 @@ public class ExpenseController {
         if(cost != 0.0){
             double tempValue = originalCost;
             tempValue = (tempValue / total) *100;
-            tempValue =  Math.round(tempValue*100.0)/100.0;
+            //tempValue =  Math.round(tempValue*100.0)/100.0;
             if(cost > originalCost){
                 double temp = cost - originalCost;
                 total = total + temp;
                 double newValue = (cost / total) * 100;
-                newValue = Math.round(newValue*100.0)/100.0;
+                //newValue = Math.round(newValue*100.0)/100.0;
                 for(int i=0;i<categoryValues.size();i++){
                     if(categoryValues.get(i) == tempValue){
                         categoryValues.set(i, newValue);
@@ -140,7 +140,7 @@ public class ExpenseController {
                 double temp = originalCost - cost;
                 total = total - temp;
                 double newValue = (cost / total) * 100;
-                newValue = Math.round(newValue*100.0)/100.0;
+                //newValue = Math.round(newValue*100.0)/100.0;
                 for(int i=0;i<categoryValues.size();i++){
                     if(categoryValues.get(i) == tempValue){
                         categoryValues.set(i, newValue);
@@ -154,8 +154,8 @@ public class ExpenseController {
             
         }
 
-        double tempValue = (originalCost / total) *100;
-        tempValue =  Math.round(tempValue*100.0)/100.0;
+        //double tempValue = (originalCost / total) *100;
+        //tempValue =  Math.round(tempValue*100.0)/100.0;
         
         if(expenseCategory.length() > 0){
             String tempCategory = "";
@@ -168,17 +168,22 @@ public class ExpenseController {
                     tempCategory = tempCategory + temp.toLowerCase();
                 }
             }
+            
             for(int i=0;i<categoryLabels.size();i++){
                 if(tempCategory.equals(categoryLabels.get(i))){
+
                     categoryLabels.set(i, expenseCategory);
                     index = i;
+                    
                 }
             }
         }
 
-        if(index != 0){
-            expense.updateExpense(expense_id_list.get(index), expenseCategory, cost, date);
-        }
+        int tempIndex = expense_id_list.get(index);
+
+
+        expense.updateExpense(tempIndex, expenseCategory, cost, date);
+        
 
         updateCookies(response, total, categoryLabels, categoryValues, categoryTotals);
 
@@ -275,14 +280,14 @@ public class ExpenseController {
                     double temp = categoryTotals.get(i)+cost;
                     tempTotaldata.add(temp);
                     double tempRound = (temp  / total) *100;
-                    double format =  Math.round(tempRound*100.0)/100.0;
-                    tempValuesdata.add(format);
+                    //double format =  Math.round(tempRound*100.0)/100.0;
+                    tempValuesdata.add(tempRound);
                 }
                 else{
                     double temp = (categoryTotals.get(i) / total) * 100;
-                    double format = Math.round(temp*100.0)/100.0;
+                    //double format = Math.round(temp*100.0)/100.0;
                     tempTotaldata.add(categoryTotals.get(i));
-                    tempValuesdata.add(format);
+                    tempValuesdata.add(temp);
                 }
             }
             model.addAttribute("categoryValues", tempValuesdata);
@@ -351,13 +356,13 @@ public class ExpenseController {
         List<Double>newTempArray = new ArrayList<>();
         for(int i=0;i<categoryValues.size();i++){
             double temp = (categoryTotals.get(i)/total)*100;
-            double rounded = Math.round(temp*100.0)/100.0;
-            newTempArray.add(rounded);
+            //double rounded = Math.round(temp*100.0)/100.0;
+            newTempArray.add(temp);
         }
         newArray = newTempArray;
         tempCost = tempCost*100;
-        double roundedValue = Math.round(tempCost * 100.0) / 100.0;
-        newArray.add(roundedValue);
+        //double roundedValue = Math.round(tempCost * 100.0) / 100.0;
+        newArray.add(tempCost);
         return newArray;
     }
 
@@ -403,8 +408,8 @@ public class ExpenseController {
 
             for(int i=0;i<categoryTotals.size();i++){
                 double temp = (categoryTotals.get(i) / total) * 100;
-                double roundedValue = Math.round(temp * 100.0) / 100.0;
-                categoryValues.add(roundedValue);
+                //double roundedValue = Math.round(temp * 100.0) / 100.0;
+                categoryValues.add(temp);
             }
 
             String tempUser = userID + "";

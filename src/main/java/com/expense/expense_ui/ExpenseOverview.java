@@ -143,13 +143,14 @@ public class ExpenseOverview {
     public void updateExpense(int expense_id,String category, double cost, String date){
         String SQL = "UPDATE Expense SET";
         if(category.length() > 0){
-            SQL = SQL + " category = " + category + ",";
+            SQL = SQL + " category = " + '"' + category + '"' + ",";
         }
         if(cost != 0.0){
             SQL = SQL + " amount = " + cost + ",";
         }
+        
         if(date.length() > 0){
-            SQL = SQL + " date = " + date + ",";
+            SQL = SQL + " purchase_date = STR_TO_DATE(?, '%Y-%m-%d'),";
         }
 
         int length = SQL.length();
@@ -165,7 +166,15 @@ public class ExpenseOverview {
             Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
 
             PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
-            preparedStatement.setInt(1, expense_id);
+            if(date.length() > 0){
+                date = "20" + date;
+                preparedStatement.setString(1, date); 
+                 preparedStatement.setInt(2, expense_id);  
+            }
+            else{
+                preparedStatement.setInt(1, expense_id);
+            }
+            
 
             int result = preparedStatement.executeUpdate();
 
