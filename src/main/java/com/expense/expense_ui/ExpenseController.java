@@ -26,11 +26,24 @@ public class ExpenseController {
         return "login"; 
     }
 
+    @GetMapping("/allExpenses")
+    public String displayExpenses(){
+        return "allExpenses";
+    }
+
     @GetMapping("/updateExpense")
-    public void updateExpense(@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
+    public void updateExpense(HttpServletResponse response,@CookieValue(name = "userID", defaultValue = "") String tempUserID, Model model){
         ExpenseOverview expense = new ExpenseOverview();
-        int userID = Integer.parseInt(tempUserID);
+        int userID = Integer.parseInt(tempUserID); 
         ExpenseOverview expenseData = expense.dataForUpdateExpense(userID);
+        List<Integer> expenseIDList =expenseData.getExpenseID();
+        List<String> tempExpenseId = new ArrayList<>();
+        for(int i=0;i<expenseIDList.size();i++){
+            tempExpenseId.add(expenseIDList.get(i) + "");
+        }
+        String tempExpenseID = String.join(",",tempExpenseId);
+        Cookie expenseCookie = new Cookie("expense_id", URLEncoder.encode(tempExpenseID, StandardCharsets.UTF_8));
+        response.addCookie(expenseCookie);
         List<Double> expenseAmounts = expenseData.getExpenseAmounts();
         List<String> expenseDate = expenseData.getExpenseDates();
         List<String> expenseCategories = expenseData.getExpenseCategories();
@@ -40,23 +53,38 @@ public class ExpenseController {
             String temp = expenseDate.get(i).toUpperCase() + "    " + expenseAmounts.get(i) + "    " + expenseCategories.get(i).toUpperCase();
             allElements.add(temp);
         }
-    
         model.addAttribute("allElements", allElements);
-
     }
 
     @PostMapping("/finalizeUpdate")
     public String finalizeUpdate(@RequestParam(name = "cost", required = true) String selectedValueAndIndex, 
+                                @RequestParam(name="expense_id", defaultValue = "") String tempExpenseID,
                                 @RequestParam(name = "expenseCategory", required = false) String expenseCategory, 
                                 @RequestParam(name = "costExpense", required = false) String tempCost,
                                 @RequestParam(name = "dateExpense", required = false) String date, 
                                 @CookieValue(name="total",defaultValue = "")String tempTotal,
                                 @CookieValue(name = "categoryValues", defaultValue = "") String serializedValues, 
                                 @CookieValue(name = "categoryLabels", defaultValue = "") String serializedCategories, 
-                                @CookieValue(name = "categoryTotals", defaultValue = "") String serializedTotals, Model model){
+                                @CookieValue(name = "categoryTotals", defaultValue = "") String serializedTotals, Model model,
+                                HttpServletResponse response){
         ExpenseOverview expense = new ExpenseOverview();
-        double cost = Double.parseDouble(tempCost);
-        //expense.updateExpense(expenseCategory,cost, date);
+        int index = 0;
+        double cost = 0.0;
+        if(!tempCost.isEmpty()){
+            cost = Double.parseDouble(tempCost);
+        }
+        
+        List<String>tempIDArray = new ArrayList<>();
+        if(!tempExpenseID.isEmpty()){
+            tempIDArray = getUnserializedData(tempExpenseID);
+        }
+
+        List<Integer> expense_id_list = new ArrayList<>();
+        for(int i=0;i<tempIDArray.size();i++){
+            int temp = Integer.parseInt(tempIDArray.get(i));
+            expense_id_list.add(temp);
+        }
+        
 
         double total = Double.parseDouble(tempTotal);
 
@@ -79,29 +107,76 @@ public class ExpenseController {
 
         String[] values = selectedValueAndIndex.split("\\s{4}");
         String originalCategory = values[2];
-        String originalDate = values[0];
         double originalCost = Double.parseDouble(values[1]);
-        originalCost = originalCost / total;
-        originalCost =  Math.round(originalCost*100.0)/100.0;
 
         if(cost != 0.0){
+            double tempValue = originalCost;
+            tempValue = (tempValue / total) *100;
+            tempValue =  Math.round(tempValue*100.0)/100.0;
             if(cost > originalCost){
-                //total = 
+                double temp = cost - originalCost;
+                total = total + temp;
+                double newValue = (cost / total) * 100;
+                newValue = Math.round(newValue*100.0)/100.0;
+                for(int i=0;i<categoryValues.size();i++){
+                    if(categoryValues.get(i) == tempValue){
+                        categoryValues.set(i, newValue);
+                        index = i;
+                    }
+                    if(originalCost == categoryTotals.get(i)){
+                        categoryTotals.set(i, cost);
+                    }
+                }
             }
-
+            if(cost < originalCost){
+                double temp = originalCost - cost;
+                total = total - temp;
+                double newValue = (cost / total) * 100;
+                newValue = Math.round(newValue*100.0)/100.0;
+                for(int i=0;i<categoryValues.size();i++){
+                    if(categoryValues.get(i) == tempValue){
+                        categoryValues.set(i, newValue);
+                        index = i;
+                    }
+                    if(originalCost == categoryTotals.get(i)){
+                        categoryTotals.set(i, cost);
+                    }
+                }
+            }
+            
         }
 
+        double tempValue = (originalCost / total) *100;
+        tempValue =  Math.round(tempValue*100.0)/100.0;
+        
         if(expenseCategory.length() > 0){
+            String tempCategory = "";
+            for(int i=0;i<originalCategory.length();i++){
+                String temp = originalCategory.substring(i, i+1);
+                if(temp.equals(" ")){
+                    tempCategory = tempCategory + "+";
+                }
+                else{
+                    tempCategory = tempCategory + temp.toLowerCase();
+                }
+            }
             for(int i=0;i<categoryLabels.size();i++){
-                if(originalCategory.equals(categoryLabels.get(i)) && originalCost == categoryValues.get(i)){
+                if(tempCategory.equals(categoryLabels.get(i))){
                     categoryLabels.set(i, expenseCategory);
+                    index = i;
                 }
             }
         }
-        //need to update expenseCategory
-    
 
+        if(index != 0){
+            expense.updateExpense(expense_id_list.get(index), expenseCategory, cost, date);
+        }
 
+        updateCookies(response, total, categoryLabels, categoryValues, categoryTotals);
+
+        model.addAttribute("categoryLabels", categoryLabels);
+        model.addAttribute("categoryValues", categoryValues);
+        
         return "expenses";
 
     }
@@ -357,14 +432,6 @@ public class ExpenseController {
         }
     }
 
-
-
-  
-
-
-  
-
-   
 }
 
 

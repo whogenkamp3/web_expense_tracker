@@ -147,7 +147,7 @@
                 <select id="cost" name="cost" title="Expenses" th:required="true">
                     <option value="">Select an option</option>
                     <th:block th:each="element : ${allElements}">
-                        <option th:value="${__${element}__ + '|' + index__}"
+                        <option th:value="${element}"
                                 th:text="${element}">
                         </option>     
                     </th:block>

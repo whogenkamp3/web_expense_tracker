@@ -16,15 +16,17 @@ public class ExpenseOverview {
     private List<String> expenseDates;
     private List<String> expenseCategories;
     private List<Double> expenseAmounts; 
+    private List<Integer> expense_id;
 
     public ExpenseOverview(){
 
     }
 
-    public ExpenseOverview(List<String> expenseDates,List<String> expenseCategories,List<Double> expenseAmounts){
+    public ExpenseOverview(List<Integer> expense_id,List<String> expenseDates,List<String> expenseCategories,List<Double> expenseAmounts){
         this.expenseDates = expenseDates;
         this.expenseCategories = expenseCategories;
         this.expenseAmounts = expenseAmounts;
+        this.expense_id = expense_id;
     }
 
     public List<String> getExpenseDates(){
@@ -52,11 +54,16 @@ public class ExpenseOverview {
         return category;
     }
 
+    public List<Integer> getExpenseID(){
+        return expense_id;
+    }
+
     public ExpenseOverview dataForUpdateExpense(int UserID){
-        String SQL = "SELECT category, amount,purchase_date FROM Expense WHERE fk_login_id = ?";
+        String SQL = "SELECT expense_id, category, amount,purchase_date FROM Expense WHERE fk_login_id = ?";
         List<String> expenseDates = new ArrayList<>();
         List<Double> expenseAmounts = new ArrayList<>();
         List<String> expenseCategories = new ArrayList<>();
+        List<Integer> expense_id = new ArrayList<>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
@@ -72,9 +79,11 @@ public class ExpenseOverview {
                 String tempStringDate = tempDate.toString();
                 double tempDouble = result.getDouble("amount");
                 String tempString = result.getString("category");
+                int tempExpenseID = result.getInt("expense_id");
                 expenseDates.add(tempStringDate);
                 expenseAmounts.add(tempDouble);
                 expenseCategories.add(tempString);
+                expense_id.add(tempExpenseID);
             }
 
             preparedStatement.close();
@@ -86,13 +95,13 @@ public class ExpenseOverview {
             Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ExpenseOverview returnData = new ExpenseOverview(expenseDates,expenseCategories,expenseAmounts);
+        ExpenseOverview returnData = new ExpenseOverview(expense_id, expenseDates,expenseCategories,expenseAmounts);
         return returnData;
 
 
     }
 
-    public void updateExpense(String category, double cost, String date){
+    public void updateExpense(int expense_id,String category, double cost, String date){
         String SQL = "UPDATE Expense SET";
         if(category.length() > 0){
             SQL = SQL + " category = " + category + ",";
@@ -106,8 +115,34 @@ public class ExpenseOverview {
 
         int length = SQL.length();
 
-        if(SQL.substring(length, length+1).equals(",")){
+        if(SQL.substring(length-1, length).equals(",")){
+            SQL = SQL.substring(0,length-1);
+        }
 
+        SQL = SQL + " WHERE expense_id = ?;";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String dbURL = "jdbc:mysql://localhost:3306/expense_tracker_backend";
+            Connection dbConnection = DriverManager.getConnection(dbURL, "root", "hkldDD3@78");
+
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(SQL);
+            preparedStatement.setInt(1, expense_id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result > 0) {
+                System.out.println("Record inserted successfully!");
+            } else {
+                System.out.println("Failed to insert record.");
+            }
+
+            preparedStatement.close();
+            dbConnection.close();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginCredentials.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
